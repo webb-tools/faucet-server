@@ -1,8 +1,17 @@
 [package]
 name = "faucet-server"
 version = "0.1.0"
-edition = "2021"
+edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+rocket = { version = "0.5.0-rc.1", features = ["secrets", "tls", "json"] }
+diesel = { version = "1.3", features = ["sqlite", "r2d2"] }
+diesel_migrations = "1.3"
+rocket_db_pools = { default-features = false, version = "4.0.0-dev", git = "https://github.com/SergioBenitez/Rocket/tree/master/contrib/sync_db_pools/lib/"}
+
+[dependencies.sqlx]
+version = "0.5.1"
+default-features = false
+features = ["macros", "offline", "migrate"]
