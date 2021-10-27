@@ -1,17 +1,24 @@
-#[macro_use] extern crate rocket;
-#[macro_use] extern crate rocket_sync_db_pools;
-#[macro_use] extern crate diesel_migrations;
-#[macro_use] extern crate diesel;
+#![feature(decl_macro)]
 
-mod sqlx;
-mod diesel_sqlite;
-mod rusqlite;
-mod validate_account;
+#[macro_use] 
+extern crate rocket;
 
-#[launch]
-fn rocket() -> _ {
-    rocket::build()
-        .attach(sqlx::stage())
-        .attach(rusqlite::stage())
-        .attach(diesel_sqlite::stage())
+use sled_extensions::DbExt;
+
+mod sled;
+
+fn main() {
+    let db = sled_extensions::Config::default()
+        .path("./sled_data")
+        .open()
+        .expect("Failed to open sled db");
+        
+    rocket::ignite()
+        .manage(sled::Database {
+            faucets: db
+                .open_bincode_tree("users")
+                .expect("failed to open user tree"),
+        })
+        .mount("/api/", routes![sled::post_faucet])
+        .launch();
 }
