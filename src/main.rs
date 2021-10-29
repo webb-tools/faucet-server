@@ -6,8 +6,14 @@ extern crate rocket;
 use sled_extensions::DbExt;
 
 mod sled;
+mod subxt;
+mod evm;
 
 fn main() {
+
+    subxt::subxtTransfer();
+    evm::evmTransfer();
+    
     let db = sled_extensions::Config::default()
         .path("./sled_data")
         .open()
